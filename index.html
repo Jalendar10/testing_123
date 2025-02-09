@@ -344,7 +344,7 @@
               <th>Details</th>
             </tr>
           </thead>
-          <tbody id="suggestions-body">
+          <tbody id="suggest-comments-body">
             <!-- Suggestions will be populated here -->
           </tbody>
         </table>
@@ -460,12 +460,27 @@
 
       let jsonData = null;
 
-      try {
-        jsonData = JSON.parse(response);
-      } catch (error) {
-        console.error("JSON parsing error:", error);
-        addMessage('Chatbot', "Error parsing JSON response. Please check the data format.");
-        return;
+      // Regular expression to capture text inside a ```json ... ``` code block
+      const regex = /```json\s*([\s\S]*?)\s*```/;
+      const match = response.match(regex);
+
+      if (match && match[1]) {
+        try {
+          jsonData = JSON.parse(match[1]);
+          console.log("Extracted JSON:", jsonData);
+        } catch (error) {
+          console.error("Error parsing JSON from code block:", error);
+          addMessage('Chatbot', "Error parsing JSON response. Please check the data format.");
+          return;
+        }
+      } else {
+        try {
+          jsonData = JSON.parse(response);
+        } catch (error) {
+          console.error("JSON parsing error without delimiters:", error);
+          addMessage('Chatbot', response);
+          return;
+        }
       }
 
       if (jsonData && jsonData.chart && jsonData.data) {
@@ -573,42 +588,14 @@
         collectedData.push(sectionData);
       });
       collectedData.push({
-        "visual Words": "anything related to visual or chart words in the input then I need data in the json format {chart,data} and data should be fit for line, bar, graph, pie. I don't want any comments in the data such as // I want plain json with proper json format {chart:bar/line/graph,data{we have categories,values,label..}}, validate json format before generating."
+        "visual Words": "anything related to visual or chart words in the input then I need data in the json format {chart,data} and data should be fit for line, bar, graph, pie and without label json. I don't want any comments in the data such as // I want plain json with proper json format, validate json format before generating."
       });
 
-      fetch('/initialize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: collectedData })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Initialization response:', data);
-      })
-      .catch(error => console.error('Error during initialization:', error));
+      return collectedData;
     }
 
     // Function to get recommendations
-    function getRecommendations() {
-      const sections = document.querySelectorAll('section.collect');
-      const collectedData = [];
-
-      sections.forEach(section => {
-        const headers = section.querySelectorAll('h1, h2, h3, h4, h5');
-        const sectionData = {};
-        headers.forEach(header => {
-          const headerText = header.textContent;
-          const childData = [];
-          let sibling = header.nextElementSibling;
-          while (sibling && !sibling.matches('h1, h2, h3, h4, h5')) {
-            childData.push(sibling.textContent);
-            sibling = sibling.nextElementSibling;
-          }
-          sectionData[headerText] = childData;
-        });
-        collectedData.push(sectionData);
-      });
-
+    function getRecommendations(collectedData) {
       fetch('/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -616,18 +603,44 @@
       })
       .then(response => response.json())
       .then(data => {
-        const recommendationsContainer = document.getElementById('suggestions-body');
+        const recommendationsContainer = document.getElementById('suggest-comments-body');
         if (recommendationsContainer) {
           recommendationsContainer.innerHTML = '';
 
-          data.recommendations.forEach(line => {
-            const trimmed = line.trim();
-            if (!trimmed) return;
+          let jsonData;
+          try {
+            const jsonString = data.recommendations.join('');
+            jsonData = JSON.parse(jsonString);
+            console.log(jsonData);
+          } catch (error) {
+            console.error("Error parsing JSON response:", error);
+            addMessage('Chatbot', "Error parsing JSON response. Please check the data format.");
+            return;
+          }
 
-            const parsed = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          const comments = [];
+          for (const category in jsonData) {
+            let categoryComments = [];
+            const details = jsonData[category];
+
+            if (typeof details === 'object' && !Array.isArray(details)) {
+              const detailComments = Object.values(details).map(value => {
+                if (Array.isArray(value)) {
+                  return value.join(', ');
+                }
+                return value;
+              }).join(', ');
+              categoryComments.push(detailComments);
+            } else if (Array.isArray(details)) {
+              categoryComments.push(details.map(item => Object.values(item).join(', ')).join(', '));
+            }
+
+            comments.push({ category: category, comment: categoryComments.join(', ') });
+          }
+
+          comments.forEach(comment => {
             const row = document.createElement('tr');
-            const [category, details] = parsed.split(':');
-            row.innerHTML = `<td>${category}</td><td>${details}</td>`;
+            row.innerHTML = `<td>${comment.category}</td><td>${comment.comment}</td>`;
             recommendationsContainer.appendChild(row);
           });
         }
@@ -637,8 +650,8 @@
 
     // Initialize on window load
     window.onload = function () {
-      collectHeadersAndData();
-      getRecommendations();
+      const collectedData = collectHeadersAndData();
+      getRecommendations(collectedData);
       addMessage('Chatbot', 'This chatbot is designed by Fiserv.');
     };
   </script>
