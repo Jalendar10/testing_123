@@ -449,48 +449,28 @@
           addMessage('Chatbot', 'Sorry, something went wrong.');
         });
       } else {
-        // Optionally, you can prompt the user to enter a message
         addMessage('Chatbot', 'Please enter a message to send.');
       }
     }
 
     // Function to handle the chatbot's response
     function handleChatbotResponse(response) {
-      // Trim the response to remove extra spaces
       response = response.trim();
       console.log('Raw Response:', response);
 
       let jsonData = null;
 
-      // Check if the response starts with ```json and ends with ```
-      if (response.startsWith("```json") && response.endsWith("```")) {
-        try {
-          // Extract the JSON part between ```json and ```
-          const jsonString = response.replace(/```json|```/g, '').trim();
-          jsonData = JSON.parse(jsonString);
-          console.log(jsonData);
-        } catch (error) {
-          console.error("JSON parsing error with delimiters:", error);
-          addMessage('Chatbot', "Error parsing JSON response. Please check the data format.");
-          return; // Exit the function if parsing fails
-        }
+      try {
+        jsonData = JSON.parse(response);
+      } catch (error) {
+        console.error("JSON parsing error:", error);
+        addMessage('Chatbot', "Error parsing JSON response. Please check the data format.");
+        return;
       }
 
-      // If jsonData is still null, attempt to parse the entire response as JSON
-      if (!jsonData) {
-        try {
-          jsonData = JSON.parse(response);
-        } catch (error) {
-          console.error("JSON parsing error without delimiters:", error);
-          // Treat it as plain text if parsing fails
-        }
-      }
-
-      // If jsonData is successfully parsed and has 'chart' and 'data', display the chart
       if (jsonData && jsonData.chart && jsonData.data) {
         displayCharts(jsonData);
       } else {
-        // Treat it as plain text
         addMessage('Chatbot', response);
       }
     }
@@ -499,91 +479,40 @@
     function displayCharts(data) {
       console.log("Displaying chart with data:", data);
 
-      // Ensure the JSON has the required structure
       if (!data.chart || !data.data) {
         console.error("Invalid JSON format. Expected 'chart' and 'data' keys.");
         addMessage('Chatbot', "Invalid chart data format.");
         return;
       }
 
-      // Option 1: If server sends data in Chart.js format
-      if (data.data.labels && data.data.datasets) {
-        var chartData = data.data;
-      } else {
-        // Option 2: If server sends custom format, map it to Chart.js format
-        if (!data.data.categories || !data.data.values) {
-          console.error("Invalid data structure for chart.");
-          addMessage('Chatbot', "Invalid data structure for chart.");
-          return;
-        }
+      let chartData = data.data;
 
-        var chartData = {
-          labels: data.data.categories,
-          datasets: [{
-            label: data.data.categories,
-            data: data.data.values,
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(54, 162, 235, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)"
-            ],
-            borderColor: [
-              "rgba(255,99,132,1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)"
-            ],
-            borderWidth: 1
-          }]
-        };
-      }
-
-      // Create a unique identifier for the canvas
       const canvasId = 'chartCanvas-' + Date.now();
-
-      // Create a container for the chart
       const chartContainer = document.createElement('div');
       chartContainer.classList.add('chart-container');
 
-      // Create the canvas element
       const canvas = document.createElement('canvas');
       canvas.id = canvasId;
       chartContainer.appendChild(canvas);
 
-      // Add the chart container to the chatbot messages
       addCustomMessage('Chatbot', chartContainer);
 
-      // Get the context of the canvas
       const ctx = canvas.getContext('2d');
+      const chartType = data.chart.toLowerCase();
 
-      // Determine the chart type
-      const chartType = data.chart.toLowerCase(); // e.g., "bar", "line", "pie"
-
-      // Prepare the chart configuration
       const chartConfig = {
         type: chartType,
         data: chartData,
         options: {
           responsive: true,
           plugins: {
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: `Chart Type: ${data.chart}`,
-            },
+            legend: { position: 'top' },
+            title: { display: true, text: `Chart Type: ${data.chart}` },
           },
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
+          scales: { y: { beginAtZero: true } },
         },
       };
 
-      // Render the chart
       new Chart(ctx, chartConfig);
     }
 
@@ -643,7 +572,6 @@
         });
         collectedData.push(sectionData);
       });
-      // Add the specific string related to chart words
       collectedData.push({
         "visual Words": "anything related to visual or chart words in the input then I need data in the json format {chart,data} and data should be fit for line, bar, graph, pie. I don't want any comments in the data such as // I want plain json with proper json fromat, validate json format before genrating."
       });
@@ -681,7 +609,6 @@
         collectedData.push(sectionData);
       });
 
-      // Send data to /recommend
       fetch('/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -689,26 +616,18 @@
       })
       .then(response => response.json())
       .then(data => {
-        // "data.recommendations" is an array of lines
         const recommendationsContainer = document.getElementById('suggestions-body');
         if (recommendationsContainer) {
-          recommendationsContainer.innerHTML = ''; // Clear existing suggestions
+          recommendationsContainer.innerHTML = '';
 
           data.recommendations.forEach(line => {
-            // 1) Trim whitespace
             const trimmed = line.trim();
-            // 2) Skip empty lines
             if (!trimmed) return;
 
-            // 3) Convert **bold** -> <strong>bold</strong>
             const parsed = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-            // 4) Create table rows for each recommendation
             const row = document.createElement('tr');
             const [category, details] = parsed.split(':');
             row.innerHTML = `<td>${category}</td><td>${details}</td>`;
-
-            // 5) Append <tr> to <tbody>
             recommendationsContainer.appendChild(row);
           });
         }
