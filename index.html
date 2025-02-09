@@ -573,7 +573,7 @@
         collectedData.push(sectionData);
       });
       collectedData.push({
-        "visual Words": "anything related to visual or chart words in the input then I need data in the json format {chart,data} and data should be fit for line, bar, graph, pie. I don't want any comments in the data such as // I want plain json with proper json fromat, validate json format before genrating."
+        "visual Words": "anything related to visual or chart words in the input then I need data in the json format {chart,data} and data should be fit for line, bar, graph, pie. I don't want any comments in the data such as // I want plain json with proper json fromat {chart:bar/line/graph,data{we have categories,values,label..}}, validate json format before genrating."
       });
 
       fetch('/initialize', {
