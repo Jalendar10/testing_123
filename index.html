@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="css/fdl-bootstrap.css" />
-  <link rel="stylesheet" href="css/material-icons.css" />
-  <link rel="stylesheet" href="css/fdl-style.css" />
-  <link rel="stylesheet" href="css/datepicker.css" />
-  <link rel="stylesheet" href="css/site.css" />
+  <link rel="stylesheet" href="css/material-icons.css"  />
+  <link rel="stylesheet" href="css/fdl-style.css"  />
+  <link rel="stylesheet" href="css/datepicker.css"  />
+  <link rel="stylesheet" href="css/site.css"  />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CreditPRO Relationship Summary</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     /* Chatbot container */
@@ -20,7 +18,7 @@
         bottom: 20px;
         right: 20px;
         width: 350px;
-        max-height: 600px;
+        max-height: 1500px;
         border: 1px solid #ccc;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -28,7 +26,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        transition: transform 0.3s ease;
+        resize: both;
     }
 
     /* Chatbot header */
@@ -39,18 +37,6 @@
         text-align: center;
         font-size: 18px;
         font-weight: bold;
-        cursor: move; /* Allow dragging */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .chatbot-header .minimize-button {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
     }
 
     /* Chatbot messages area */
@@ -124,94 +110,13 @@
     }
 
     .chatbot-input button:hover {
-        background-color: #d34f0b;
-    }
-
-    /* Suggest comments table */
-    .suggest-comments-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    .suggest-comments-table th, .suggest-comments-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-
-    .suggest-comments-table th {
-        background-color: #f2f2f2;
-    }
-
-    /* Chatbot icon */
-    .chatbot-icon {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
         background-color: #ea550f;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 24px;
-        cursor: pointer;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    /* Modal styling */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
 
-    .modal-content {
-        position: relative;
-        margin: auto;
-        padding: 0;
-        width: 80%;
-        max-width: 800px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
+</style>
 
-    .modal-header {
-        background-color: #ea550f;
-        color: white;
-        padding: 10px;
-        text-align: right;
-    }
 
-    .modal-header .close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-    }
-
-    .modal-body {
-        padding: 10px;
-        height: calc(100% - 50px); /* Adjust for header height */
-        position: relative;
-    }
-
-    .modal-body canvas {
-        width: 100%;
-        height: 100%;
-    }
-  </style>
 </head>
 <body class="fdl-2" style="line-height: 1.6; color: #333;">
   <main style="margin-left: 20px;">
@@ -407,12 +312,13 @@
         </div>
     </section>
 
-    <section>
-        <h2>Other</h2>
-        <div style="margin-left: 25px;">
-            <textarea rows="4" cols="100" placeholder="Enter your comments here..."></textarea>
-        </div>
-    </section>
+<section>
+    <h2>Other</h2>
+    <div style="margin-left: 25px; "">            
+        <textarea rows="4" cols="100" placeholder="Enter your comments here..."></textarea>
+    </div> 
+
+</section>
     <section id="auto_generated">
         <h2>Recommendation</h2>
         <ul style="margin-left: 25px;">
@@ -424,115 +330,86 @@
         </div>
         <div style="margin-left: 25px;" id="suggest_comments">
             <h5>Suggest Comments</h5>
-            <table class="suggest-comments-table">
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Comment</th>
-                    </tr>
-                </thead>
-                <tbody id="suggest-comments-body">
-                    <!-- Suggested comments will be inserted here -->
-                </tbody>
-            </table>
+            <ul id="recommendations"></ul>
         </div>
     </section>
 
-    <section>
-        <h2>Previous Review Comments</h2>
-        <main>
-            <section>
-                <div style="margin-left: 25px;">
-                    <h3 style="color: rgb(46, 139, 201);">Previous 3 Trigger Alerts</h3>
-                    <h4>Alert Date: 15-APR-2024</h4>
-                    <p><b>Rules Triggered</b></p>
-                    <ul style="margin-left: 25px;">
-                        <li>Change In Collateral Balance</li>
-                        <li>High Equity Leverage (Financial)</li>
-                    </ul>
-                    <p><b>Analyst Name:</b> DHIRAJ RAJ SRIWASTAVA</p>
-                    <p><b>Decision:</b> Maintain As Is</p>
-                    <p><b>Decision Date:</b> 17-Apr-2024</p>
-                    <p><b>Comments:</b>
-                        Alert on Change In Collateral Balance: Validated on ICE, security balance as on 17th April 2024 is €30k. Processing trend inline with previous trend. Refund ratio is 1.43% vs IA 2.14% and nil CB. MAI.</p>
-                    <hr>
-                    <p><b>Analyst Name:</b> Nikhil Kanabar</p>
-                    <p><b>Decision:</b> Maintain As Is</p>
-                    <p><b>Decision Date:</b> 17-Apr-2024</p>
-                    <p><b>Comments:</b> False Positive Trigger Alert for Change in Collateral Balance. Validated on ICE, security balance as on 17th April 2024 is €30k. Refund ratio is 1.43% vs IA 2.14% and nil CB. MAI</p>
-                    <hr>
-                    <p><b>Analyst Name:</b> Anthony Wood</p>
-                    <p><b>Decision:</b> Maintain As Is</p>
-                    <p><b>Decision Date:</b> 30-Apr-2024</p>
-                    <p><b>Comments:</b></p>
-                    <hr>
-                    <h4>Alert Date: 31-Dec-2023</h4>
-                    <p><b>Rules Triggered:</b></p>
-                    <ul style="margin-left: 25px;">
-                        <li>Ownership Change (Reputational)</li>
-                        <li>High Equity Leverage (Financial)</li>
-                        <li>Safety Net- Latest Financial Information greater than 2 years (Financial)</li>
-                    </ul>
-                    <p><b>Analyst Name:</b> Reema Dalimbe</p>
-                    <p><b>Decision:</b> Maintain As Is</p>
-                    <p><b>Decision Date:</b> 22-Jan-2024</p>
-                    <p><b>Comments:</b> Rule generated for Ownership change: Rectified on CS. MAI</p>
-                    <hr>
-                    <p><b>Analyst Name:</b> SYSTEM</p>
-                    <p><b>Decision:</b> Maintain As Is</p>
-                    <p><b>Decision Date:</b> 25-Jan-2024</p>
-                    <p><b>Comments:</b> Closing this alert as a this is a false positive alert INC -INC015070894</p>
-                    <hr>
-                    <h4>Alert Date: 03-Oct-2023</h4>
-                    <p><b>Rules Triggered:</b></p>
-                    <ul style="margin-left: 25px;">
-                        <li>High Refunds (Operational)</li>
-                    </ul>
-                    <p><b>Analyst Name:</b> DHIRAJ RAJ SRIWASTAVA</p>
-                    <p><b>Decision:</b> Maintain As Is</p>
-                    <p><b>Decision Date:</b> 06-Oct-2023</p>
-                    <p><b>Comments:</b> Alert on high refunds: Processing in line, however no processing seen in Oct 23 till date. Current CR is 1.86% vs IA 2.14% & nil CB. Need to confirm whether merchant has migrated. Deferring till Nov 23 till then MAI.</p>
-                    <hr>
-                    <p><b>Analyst Name:</b> Oumar Oumar Sheriff</p>
-                    <p><b>Decision:</b> Maintain As Is</p>
-                    <p><b>Decision Date:</b> 10-Oct-2023</p>
-                    <p><b>Comments:</b> I have contacted the merchant to confirm if migration is the case.</p>
-                </div>
-            </section><br/>
+<section>    <h2>Previous Review Comments</h2>    
+    <main>
+        <section>                
             <div style="margin-left: 25px;">
-                <h5>Additional Comments</h5>
-                <textarea rows="4" cols="100" placeholder="Enter your comments here..."></textarea>
+                <h3 style="color: rgb(46, 139, 201);">Previous 3 Trigger Alerts</h3>
+                <h4 >Alert Date: 15-APR-2024</h4>
+                <p><b>Rules Triggered</b></p>
+                <ul style="margin-left: 25px;">
+                    <li>Change In Collateral Balance</li>
+                    <li>High Equity Leverage (Financial)</li>
+                </ul>
+                <p><b>Analyst Name:</b> DHIRAJ RAJ SRIWASTAVA</p>
+                <p><b>Decision:</b> Maintain As Is</p>
+                <p><b>Decision Date:</b> 17-Apr-2024</p>
+                <p><b>Comments:</b>
+                 Alert on Change In Collateral Balance: Validated on ICE, security balance as on 17th April 2024 is €30k. Processing trend inline with previous trend. Refund ratio is 1.43% vs IA 2.14% and nil CB. MAI.</p>
+                <hr>
+                <p><b>Analyst Name:</b> Nikhil Kanabar</p>
+                <p><b>Decision:</b> Maintain As Is</p>
+                <p><b>Decision Date:</b> 17-Apr-2024</p>
+                <p><b>Comments:</b> False Positive Trigger Alert for Change in Collateral Balance. Validated on ICE, security balance as on 17th April 2024 is €30k. Refund ratio is 1.43% vs IA 2.14% and nil CB. MAI</p>
+                <hr>
+                <p><b>Analyst Name:</b> Anthony Wood</p>
+                <p><b>Decision:</b> Maintain As Is</p>
+                <p><b>Decision Date:</b> 30-Apr-2024</p>
+                <p><b>Comments:</b></p>
+                <hr>
+                <h4>Alert Date: 31-Dec-2023</h4>
+                <p><b>Rules Triggered:</b></p>
+                <ul style="margin-left: 25px;">
+                    <li>Ownership Change (Reputational)</li>
+                    <li>High Equity Leverage (Financial)</li>
+                    <li>Safety Net- Latest Financial Information greater than 2 years (Financial)</li>
+                </ul>
+                <p><b>Analyst Name:</b> Reema Dalimbe</p>
+                <p><b>Decision:</b> Maintain As Is</p>
+                <p><b>Decision Date:</b> 22-Jan-2024</p>
+                <p><b>Comments:</b> Rule generated for Ownership change: Rectified on CS. MAI</p>
+                <hr>
+                <p><b>Analyst Name:</b> SYSTEM</p>
+                <p><b>Decision:</b> Maintain As Is</p>
+                <p><b>Decision Date:</b> 25-Jan-2024</p>
+                <p><b>Comments:</b> Closing this alert as a this is a false positive alert INC -INC015070894</p>
+                <hr>
+                <h4>Alert Date: 03-Oct-2023</h4>
+                <p><b>Rules Triggered:</b></p>
+                <ul style="margin-left: 25px;">
+                    <li>High Refunds (Operational)</li>
+                </ul>
+                <p><b>Analyst Name:</b> DHIRAJ RAJ SRIWASTAVA</p>
+                <p><b>Decision:</b> Maintain As Is</p>
+                <p><b>Decision Date:</b> 06-Oct-2023</p>
+                <p><b>Comments:</b> Alert on high refunds: Processing in line, however no processing seen in Oct 23 till date. Current CR is 1.86% vs IA 2.14% & nil CB. Need to confirm whether merchant has migrated. Deferring till Nov 23 till then MAI.</p>
+                <hr>
+                <p><b>Analyst Name:</b> Oumar Oumar Sheriff</p>
+                <p><b>Decision:</b> Maintain As Is</p>
+                <p><b>Decision Date:</b> 10-Oct-2023</p>
+                <p><b>Comments:</b> I have contacted the merchant to confirm if migration is the case.</p>
             </div>
-        </main>
-    </section>
+                    </section><br/>
+                    <div style="margin-left: 25px;">
+                        <h5>Additional Comments</h5>
+                        <textarea rows="4" cols="100" placeholder="Enter your comments here..."></textarea>
+                    </div> 
+    </main>
 
-    <div class="chatbot-icon" id="chatbot-icon">💬</div>
-    <div class="chatbot-container" id="chatbot-container">
-      <div class="chatbot-header">
-        HRM Review Personal Assistant.
-        <button class="minimize-button" id="minimize-button">−</button>
-      </div>
+    <div class="chatbot-container">
+      <div class="chatbot-header">HRM Review Personal Assistant.</div>
       <div class="chatbot-messages" id="chatbot-messages"></div>
       <div class="chatbot-input">
         <input type="text" id="chatbot-input" placeholder="Type a message...">
         <button onclick="sendMessage()">Send</button>
       </div>
     </div>
-
-    <!-- Modal for enlarged interactive chart -->
-    <div class="modal" id="image-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button class="close" id="close-modal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <canvas id="modal-chart-canvas"></canvas>
-        </div>
-      </div>
-    </div>
-
   </main>
-
+ 
   <script>
     // Function to send a message
     function sendMessage() {
@@ -568,37 +445,35 @@
 
       let jsonData = null;
 
-      // Regular expression to capture text inside a ```json ... ``` code block
-      const regex = /```json\s*([\s\S]*?)\s*```/;
-      const match = response.match(regex);
-
-      if (match && match[1]) {
+      // Check if the response starts with ```json and ends with ```
+      if (response.startsWith("```json") && response.endsWith("```")) {
         try {
-          // Parse the captured JSON text from the code block
-          jsonData = JSON.parse(match[1]);
-          console.log("Extracted JSON:", jsonData);
+          // Extract the JSON part between ```json and ```
+          const jsonString = response.replace(/```json|```/g, '').trim();
+          jsonData = JSON.parse(jsonString);
+          console.log(jsonData);
         } catch (error) {
-          console.error("Error parsing JSON from code block:", error);
+          console.error("JSON parsing error with delimiters:", error);
           addMessage('Chatbot', "Error parsing JSON response. Please check the data format.");
           return; // Exit the function if parsing fails
         }
-      } else {
-        // Fallback: try to parse the entire response as JSON
+      }
+
+      // If jsonData is still null, attempt to parse the entire response as JSON
+      if (!jsonData) {
         try {
           jsonData = JSON.parse(response);
         } catch (error) {
           console.error("JSON parsing error without delimiters:", error);
-          // Treat the response as plain text if JSON parsing fails
-          addMessage('Chatbot', response);
-          return;
+          // Treat it as plain text if parsing fails
         }
       }
 
-      // If valid JSON with chart information exists, display the chart
+      // If jsonData is successfully parsed and has 'chart' and 'data', display the chart
       if (jsonData && jsonData.chart && jsonData.data) {
         displayCharts(jsonData);
       } else {
-        // Otherwise, just display the plain text response
+        // Treat it as plain text
         addMessage('Chatbot', response);
       }
     }
@@ -628,7 +503,7 @@
         var chartData = {
           labels: data.data.categories,
           datasets: [{
-            label: data.data.categories,
+            label:data.data.categories ,
             data: data.data.values,
             backgroundColor: [
               "rgba(255, 99, 132, 0.2)",
@@ -659,11 +534,6 @@
       canvas.id = canvasId;
       chartContainer.appendChild(canvas);
 
-      // Add click event listener to enlarge the chart
-      canvas.addEventListener('click', () => {
-        openModalChart(chartData, data.chart.toLowerCase());
-      });
-
       // Add the chart container to the chatbot messages
       addCustomMessage('Chatbot', chartContainer);
 
@@ -687,21 +557,6 @@
               display: true,
               text: `Chart Type: ${data.chart}`,
             },
-            zoom: {
-              zoom: {
-                wheel: {
-                  enabled: true,
-                },
-                pinch: {
-                  enabled: true
-                },
-                mode: 'xy',
-              },
-              pan: {
-                enabled: true,
-                mode: 'xy',
-              }
-            }
           },
           scales: {
             y: {
@@ -713,56 +568,6 @@
 
       // Render the chart
       new Chart(ctx, chartConfig);
-    }
-
-    // Function to open the modal with an interactive chart
-    function openModalChart(chartData, chartType) {
-      const modalCanvas = document.getElementById('modal-chart-canvas');
-      const modalCtx = modalCanvas.getContext('2d');
-
-      // Prepare the chart configuration for the modal
-      const modalChartConfig = {
-        type: chartType,
-        data: chartData,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: `Interactive Chart`,
-            },
-            zoom: {
-              zoom: {
-                wheel: {
-                  enabled: true,
-                },
-                pinch: {
-                  enabled: true
-                },
-                mode: 'xy',
-              },
-              pan: {
-                enabled: true,
-                mode: 'xy',
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      };
-
-      // Render the chart in the modal
-      new Chart(modalCtx, modalChartConfig);
-
-      // Show the modal
-      document.getElementById('image-modal').style.display = 'block';
     }
 
     // Function to add a message to the chatbot
@@ -822,8 +627,8 @@
         collectedData.push(sectionData);
       });
       // Add the specific string related to chart words
-      collectedData.push({
-        "visual Words": "anything related to visual or chart words in the input then I need data in the json format {chart,data} and data should be fit for line, bar, graph, pie and without label json. I don't want any comments in the data such as // I want plain json with proper json format, validate json format before generating."
+      collectedData.push({ 
+        "visual Words": "anything related to visual or chart words in the input then I need data in the json format {chart,data} and data should be fit for line, bar, graph, pie. I don't want any comments in the data such as // I want plain json with proper json fromat, validate json format before genrating." 
       });
 
       fetch('/initialize', {
@@ -836,108 +641,72 @@
         console.log('Initialization response:', data);
       })
       .catch(error => console.error('Error during initialization:', error));
-
-      return collectedData; // Return the collected data
     }
 
-  // Function to get recommendations
-function getRecommendations(collectedData) {
-  fetch('/recommend', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: collectedData }) // Pass the collected data
-  })
-  .then(response => response.json())
-  .then(data => {
-    const recommendationsContainer = document.getElementById('suggest-comments-body');
-    if (recommendationsContainer) {
-      recommendationsContainer.innerHTML = ''; // Clear existing suggestions
+    // Function to get recommendations
+    function getRecommendations() {
+      const sections = document.querySelectorAll('section.collect');
+      const collectedData = [];
 
-      // Ensure data is correctly parsed
-      let jsonData;
-      try {
-        // Join the array elements into a single string and parse as JSON
-        const jsonString = data.recommendations.join('');
-        jsonData = JSON.parse(jsonString);
-        console.log(jsonData);
-      } catch (error) {
-        console.error("Error parsing JSON response:", error);
-        addMessage('Chatbot', "Error parsing JSON response. Please check the data format.");
-        return;
-      }
-
-      const comments = [];
-
-      // Iterate over each category and concatenate comments
-      for (const category in jsonData) {
-        let categoryComments = [];
-        const details = jsonData[category];
-
-        if (typeof details === 'object' && !Array.isArray(details)) {
-          // If details is an object, join its values
-          const detailComments = Object.values(details).map(value => {
-            if (Array.isArray(value)) {
-              return value.join(', ');
-            }
-            return value;
-          }).join(', ');
-          categoryComments.push(detailComments);
-        } else if (Array.isArray(details)) {
-          // If details is an array, join its elements
-          categoryComments.push(details.map(item => Object.values(item).join(', ')).join(', '));
-        }
-
-        comments.push({ category: category, comment: categoryComments.join(', ') });
-      }
-
-      comments.forEach(comment => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${comment.category}</td><td>${comment.comment}</td>`;
-        recommendationsContainer.appendChild(row);
+      sections.forEach(section => {
+        const headers = section.querySelectorAll('h1, h2, h3, h4, h5');
+        const sectionData = {};
+        headers.forEach(header => {
+          const headerText = header.textContent;
+          const childData = [];
+          let sibling = header.nextElementSibling;
+          while (sibling && !sibling.matches('h1, h2, h3, h4, h5')) {
+            childData.push(sibling.textContent);
+            sibling = sibling.nextElementSibling;
+          }
+          sectionData[headerText] = childData;
+        });
+        collectedData.push(sectionData);
       });
-    }
-  })
-  .catch(err => console.error('Error fetching recommendations:', err));
-}
 
-    // Function to toggle chatbot visibility
-    function toggleChatbot() {
-      const chatbotContainer = document.getElementById('chatbot-container');
-      const chatbotIcon = document.getElementById('chatbot-icon');
-      if (chatbotContainer.style.transform === 'translateY(calc(100% + 20px))') {
-        chatbotContainer.style.transform = 'translateY(0)';
-        chatbotIcon.style.display = 'none';
-      } else {
-        chatbotContainer.style.transform = 'translateY(calc(100% + 20px))';
-        chatbotIcon.style.display = 'flex';
-      }
-    }
+      // Removed the local file fetch as browsers cannot access local files directly
+      // Ensure that any necessary data is fetched from appropriate server endpoints
 
-    // Function to minimize the chatbot
-    function minimizeChatbot() {
-      const chatbotContainer = document.getElementById('chatbot-container');
-      const chatbotIcon = document.getElementById('chatbot-icon');
-      chatbotContainer.style.transform = 'translateY(calc(100% + 20px))';
-      chatbotIcon.style.display = 'flex';
-    }
+      // Send data to /recommend
+      fetch('/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: collectedData })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // "data.recommendations" is an array of lines
+          const recommendationsContainer = document.getElementById('recommendations');
+          if (recommendationsContainer) {
+            recommendationsContainer.innerHTML = ''; // Clear existing suggestions
 
-    // Function to close the modal
-    function closeModal() {
-      document.getElementById('image-modal').style.display = 'none';
+            data.recommendations.forEach(line => {
+              // 1) Trim whitespace
+              const trimmed = line.trim();
+              // 2) Skip empty lines
+              if (!trimmed) return;
+
+              // 3) Convert **bold** -> <strong>bold</strong>
+              const parsed = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+              // 4) Create an <li> as the container for each recommendation
+              const li = document.createElement('li');
+              li.innerHTML = parsed; // Insert as HTML
+
+              // 5) Append <li> to <ul>
+              recommendationsContainer.appendChild(li);
+            });
+          }
+        })
+        .catch(err => console.error('Error fetching recommendations:', err));
     }
 
     // Initialize on window load
     window.onload = function () {
-      const collectedData = collectHeadersAndData();
-      getRecommendations(collectedData);
+      collectHeadersAndData();
+      getRecommendations();
       addMessage('Chatbot', 'This chatbot is designed by Fiserv.');
-
-      // Set up event listeners
-      document.getElementById('minimize-button').addEventListener('click', minimizeChatbot);
-      document.getElementById('chatbot-icon').addEventListener('click', toggleChatbot);
-      document.getElementById('close-modal').addEventListener('click', closeModal);
     };
   </script>
-
 </body>
 </html>
