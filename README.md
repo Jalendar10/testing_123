@@ -207,3 +207,270 @@ window.onload = function () {
   getRecommendations();
   addMessage('Chatbot', 'This chatbot is designed by Fiserv.');
 };
+
+
+after this code
+it was displaying like this
+Suggest Comments
+Category	Details
+0	
+"```json"
+1	
+"{"
+2	
+"  \"Financial Health\": {"
+3	
+"    \" Year\": 1929,"
+4	
+"    \"Company Registration No\": \"00241882\","
+5	
+"    \"Oned Year\": 2014,"
+6	
+"    \"Website\": \"www.full.co.uk\","
+7	
+"    \"Directors\": ["
+8	
+"      \"Ms Dawn Browne\","
+9	
+"      \"Mr Neil Reynolds Smith\","
+10	
+"      \"Ms Rachel Louise Spencer\","
+11	
+"      \"Mr Robin James Leslie Rowland\","
+12	
+"      \"Mr Frederick James Mortimer Turner\","
+13	
+"      \"Mrs Helen Victoria Jones\","
+14	
+"      \"Msiette Natasha Stacey\","
+15	
+"      \"Sir James Henry Fleetwood Fuller\","
+16	
+"      \"Mr Richard Hamilton Fleetwood Fuller\","
+17	
+"      \"Mr Simon Emeny\","
+18	
+"      \"Mr Michael John Turner\""
+19	
+"    ],"
+20	
+"    \"Total Shareholders\": \"UNDISCLOSED (99.99%)\","
+21	
+" \"CreditSafe Score\": 68,"
+22	
+"    \"CreditSafe Commentary\": {"
+23	
+"      \"Company Type\": \"Treated as PLC for scoring/limit\","
+24	
+"      \"Asset Ratio\": \"High on obligations\","
+25	
+"      \"Net Working Capital\": \"Negative\","
+26	
+"      \"Return on Assets \": \"Low\","
+27	
+"      \"Equity\": \"Decreased previous year\","
+28	
+"      \"\": \"Increased from previous year\","
+29	
+"      \"Late Payment\": \"Low percentage of invoices late\","
+30	
+"      \"Auditor Status\": \"No adverse information reported\""
+31	
+"    }"
+32	
+" },"
+33	
+"  \"Processing\": {"
+34	
+"   30 Days Sales\": \"€361,566\","
+35	
+"    \"Annual CTO\": {"
+36	
+"      \"Current Year\": \"€69.00M\","
+37	
+"      \"Previous Year\": \"€220.44M\""
+38	
+"    },"
+39	
+"    \"Average Transaction Value\": \"€30.12\","
+40	
+"    \"Refund Percentage\": {"
+41	
+"      \"Current\": \"0.5%\","
+42	
+"      \"Previous Year\": \"0.23%\","
+43	
+"     30 Days Ratio\": \"1.76%\""
+44	
+"    },"
+45	
+"    \"Chargebacks\": {"
+46	
+"      \"Amount\": {"
+47	
+"        \"Current\": \"0.%\","
+48	
+"        \"Previous Year\": \"0.02%\","
+49	
+"        \"30 Days\": \"0%\""
+50	
+"      },"
+51	
+"      \"Count\": {"
+52	
+"        \"Current\": \"0%\","
+53	
+"        \"Previous Year\": \"0.0%\","
+54	
+"        \"30 Days\": \"0.0%\""
+55	
+"      }"
+56	
+"    },"
+57	
+"    \"Keyed vs. Chip Percentage\": \"12.52%\","
+58	
+"    \"Keyed vs. ECOM Percentage\": \"98%\""
+59	
+"  },"
+60	
+"  \"Exposure {"
+61	
+"    \"NDX Percentage\": 89,"
+62	
+"    \"NDX Days\": 15,"
+63	
+"    \"Current Risk\": {"
+64	
+"      \"Relationship Exposure\": \"€2,900\","
+65	
+"      \"Peak Risk\":€3,201,439\""
+66	
+"    },"
+67	
+"    \"NDX Exposure\": {"
+68	
+"      \"Current\": \"€0\","
+69	
+"      \"Peak\": \"€3,071,334\""
+70	
+"    },"
+71	
+"    \"Operating Exposure\": {"
+72	
+"      \"Current\": \"€2,900\","
+73	
+"      \"Peak\": \"€130,105\""
+74	
+"    },"
+75	
+"    \"Chargeback Exposure\": {"
+76	
+"      \"Current\": \"€86\","
+77	
+" \"Peak\": \"€6,858\""
+78	
+"    },"
+79	
+"    \"Refund Exposure\": {"
+80	
+"      \"Current\": \"€2,814\","
+81	
+"      \"Peak\": \"€123,247\""
+82	
+"    }"
+83	
+"  },"
+84	
+"  \"Financial Summary\": {"
+85	
+"    \"FYE 2023\": {"
+86	
+"      \"Operating Profit\": {"
+87	
+" \"Amount\": \"€27,700000\","
+88	
+"        \"Change\": \"154.13%\""
+89	
+"      },"
+90	
+"      \"Depreciation\": {"
+91	
+"        \"Amount\": \"€26,100,000\","
+92	
+"        \"Change\": \"-19.69%\""
+93	
+" },"
+94	
+"      \"Retained Profit\": {"
+95	
+"        \"Amount\": \"€-900,000\","
+96	
+"       Change\": \"-280.00%\""
+97	
+"      },"
+98	
+"      \"Total Fixed Assets\": {"
+99	
+"        \"Amount\": \"689,500,000\","
+100	
+"        \"Change\": \"-0.99%\""
+101	
+"      },"
+102	
+"      \"Cash\": {"
+103	
+"        \"Amount\": \"€12,200,000\","
+104	
+"        \"Change\": \"-13.48%\""
+105	
+"      },"
+106	
+"      \"Current Liabilities\": {"
+107	
+" \"Amount\": \"€64,900,000\","
+108	
+"        \"Change\": \"-1.52%\""
+109	
+"      },"
+110	
+"      \"Long-term Liabilities\": {"
+111	
+"        \"Amount\": \"226,400,000\","
+112	
+"       Change\": \"+1.03%\""
+113	
+"      },"
+114	
+"      \"Tangible Net Worth\": {"
+115	
+"        \"Amount\": \"€-31,800,000\","
+116	
+"        \"Change\": \"-7.07%\""
+117	
+"      },"
+118	
+"      \"Cash Flow\": {"
+119	
+"        \"Amount\": \"€20,700,000\","
+120	
+" \"Change\": \"+23.95%\""
+121	
+"      }"
+122	
+"    },"
+123	
+"    \"F 2022\": {"
+124	
+"      \"Operating Profit\": \"€10,900,000\""
+125	
+"    }"
+126	
+"  }"
+127	
+"}"
+128	
+"```"
+
+
+which is not correct fromat
