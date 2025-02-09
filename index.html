@@ -490,7 +490,6 @@
       }
     }
 
-
     // Function to display charts
     function displayCharts(data) {
       console.log("Displaying chart with data:", data);
@@ -525,7 +524,11 @@
             legend: { position: 'top' },
             title: { display: true, text: `Chart Type: ${data.chart}` },
           },
-          scales: { y: { beginAtZero: false } },
+          scales: {
+            y: {
+              beginAtZero: true, // Ensure the y-axis starts at zero
+            },
+          },
         },
       };
 
