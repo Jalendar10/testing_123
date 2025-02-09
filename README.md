@@ -1,163 +1,83 @@
 Raw Response: {
   "chart": "bar",
-  "labels": ["FYE 2022", "FYE 2023"],
-  "datasets": [
-    {
-      "label": "Operating",
-      "data": [10900, 27700000]
-    },
-    {
-      "label": "Depreciation",
-      "data": [32500000,26100000]
-    },
- {
-      "label": "Retained Profit",
-      "data": [500000, -900000]
-    },
-    {
-      "label": "Total Fixed Assets",
- "": [696400000, 689500000]
-       {
-      "label": "Cash",
-      "data": [14100000, 12200000]
-    },
-    {
-      "": "Current Liabilities",
-      "data": [65900000, 64900000]
-    },
-    {
-      "label": "-term Liabilities",
-      "data": [224100000, 400000]
-    },
-    {
-      "label": "Tangible Net Worth",
-      "data": [-29700000, -31800000]
-    },
-    {
-      "label": "Cash Flow",
- "data": [167000, 20700000]
-    }
-  ]
+  "data": {
+    "categories": ["FYE 2022", "FYE 2023"],
+    "values": [10.9, 27.7],
+    "label": "Operating Profit (€ Millions)"
+  }
 }
-(index):466  JSON parsing error: SyntaxError: Expected ',' or '}' after property value in JSON at position 379 (line 20 column 8)
-    at JSON.parse (<anonymous>)
-    at handleChatbotResponse ((index):464:25)
-    at (index):445:11
-handleChatbotResponse @ (index):466
-(anonymous) @ (index):445
-Promise.then
-sendMessage @ (index):444
-handleEnterKey @ (index):548
-(index):459 Raw Response: {
-  "chart": "pie",
-  "labels": ["Operating Profit", "Depreciation", "Retained Profit", "Total Fixed Assets", "Cash", "Current Liabilities", "-term Liabilities", "Tangible Net Worth", "Cash"],
-  "values": [27700000, 26100000, -900000, 689500000, 12200000, 00000, 224100000, -31800000, 20700000]
-}
-(index):466  JSON parsing error: SyntaxError: Unexpected number in JSON at position 257 (line 4 column 65)
-    at JSON.parse (<anonymous>)
-    at handleChatbotResponse ((index):464:25)
-    at (index):445:11
-handleChatbotResponse @ (index):466
-(anonymous) @ (index):445
-Promise.then
-sendMessage @ (index):444
-handleEnterKey @ (index):548
-(index):459 Raw Response: {
-  "chart": "line",
-  "labels": ["FYE 2022", "FYE 2023"],
-  "datasets": [
-    {
-      "label": "Operating Profit",
-     ": [10900000, 27700000]
- },
-    {
-      "label": "Depreciation",
-      "data": [32500000, 26100000]
-    },
-    {
- "label": "Retained Profit",
-      "data": [500000, -900000]
-    },
-    {
-      "label": "Total Fixed Assets",
-      "data": [696400000, 689500000    },
-    {
-      "label": "Cash",
-      "data": [14100000, 12200000]
-    },
-    {
-      "label": "Current Liabilities",
-      "": [65900000, 64900000]
-    },
-    {
-      "label": "Long-term Liabilities",
-      "data":224100000, 226400000]
-    },
-    {
-      "label": "Tangible Net Worth",
-      "data": [-29700000, -31800000]
-    },
-    {
-      "label": "Cash Flow",
-      "data":16700000, 20700000]
-    }
-  ]
-}
-(index):466  JSON parsing error: SyntaxError: Bad control character in string literal in JSON at position 144 (line 7 column 29)
-    at JSON.parse (<anonymous>)
-    at handleChatbotResponse ((index):464:25)
-    at (index):445:11
-handleChatbotResponse @ (index):466
-(anonymous) @ (index):445
-Promise.then
-sendMessage @ (index):444
-handleEnterKey @ (index):548
-(index):459 Raw Response: {
-  "chart": "graph",
-  "labels": ["FYE 2022", "FYE 2023"],
-  "datasets": [
-    {
-      "label": "Operating Profit",
-      "data": [10900000,27700000]
-    },
-    {
-      "label": "Depreciation",
-      "data": [32500000, 26100000    },
-    {
-      "label": "Retained Profit",
-      "data": [500000, -900000]
-    },
-    {
- "label": "Total Fixed Assets",
-      "data": [696400000, 689500000]
-    },
-    {
-      "label": "Cash",
-      "data": [14100000, 12200000]
-    },
-    {
- "label": "Current Liabilities",
-      "data": [65900000, 64900000]
-    },
-    {
-      "label "Long-term Liabilities",
-      "data": [224100000, 226400000]
-    },
-    {
-      "label": "angible Net Worth",
-      "data": [-29700000, -31800000]
-       {
-      "label": "Cash Flow",
-      "data": [16700000, 207000]
-    }
-  ]
-}
-(index):466  JSON parsing error: SyntaxError: Expected ',' or ']' after array element in JSON at position 232 (line 11 column 38)
-    at JSON.parse (<anonymous>)
-    at handleChatbotResponse ((index):464:25)
-    at (index):445:11
-handleChatbotResponse @ (index):466
-(anonymous) @ (index):445
-Promise.then
-sendMessage @ (index):444
-handleEnterKey @ (index):548
+
+
+and in the recommendations
+I want use the 
+      const regex = /```json\s*([\s\S]*?)\s*```/;
+      const match = response.match(regex);
+and I want to display ythe tag elemnt
+category is tag, comments are data
+
+current display format
+
+but I need Financial Health and total data to in details
+Performance Metrics tota data in detils .........
+Suggest Comments
+Category	Details
+```json	undefined
+{	undefined
+"Financial Health"	{
+"Established Year"	1929,
+"Company Registration No"	"00241882",
+"Onboarded Year"	2014,
+"CreditSafe Score 68,	undefined
+"Net Working Capital"	"Negative",
+"Revenue Change"	"Increased",
+"Equity Change"	"Decreased",
+"Late Payments"	"Low percentage of invoices late",
+"Operational Metrics"	{
+"Operating Profit"	"€27,700,000 (154.% increase)",
+"Depreciation"	"€26,100, (-19.69% decrease)",
+"Retained Profit"	"€-900,000 (-280.00 decrease)",
+"Total Fixed Assets "€689,500000 (-0.99% decrease)",	undefined
+"Cash"	"€12,200,000 (-13.48% decrease)",
+"Current Liabilities "€64,900,000 (-1.52% decrease)",	undefined
+"Long-term Liabilities"	"226,400,000 (+1.03% increase)",
+"Tangible Net Worth"	"€-31,800,000 (-707% decrease)",
+"Cash Flow"	€20,700, (+23.95% increase)"
+}	undefined
+},	undefined
+"Performance Metrics"	{
+"30 Days Sales"	"€361,566",
+"Annual CTO"	"69M",
+"ATV"	"€30.12",
+"Refunds Rate"	"0.5%",
+"Chargebacks Amount"	"0.03%",
+"Chargebacks Count"	"0%"
+},	undefined
+"Credit Risk"	{
+"CreditSafe Note"	"Low Risk with high asset cover",
+"Negative Working Capital"	true,
+"Late Payments"	"Minimal"
+},	undefined
+"Exposure"	{
+"Current Relationship Exposure"	"€2,900",
+"Peak Relationship Exposure"	"€3,,439",
+"Current NDX Exposure"	"€0",
+"Peak NDX Exposure"	"€3,071,334",
+"Chargeback Exposure Current"	"€86",
+"Chargeback Exposure Peak"	"€6,858",
+"Refund Exposure Current"	"€2,814",
+"Refund Exposure Peak"	"€123,247"
+},	undefined
+"Operational Metrics"	{
+"NDX Percentage 89,	undefined
+"NDX Days"	15
+},	undefined
+"Variable Metrics"	{
+"Refunds Rate"	"Current 0.5%, PY 0.23%,30 Days 1.76%",
+"Chargebacks Amount"	"Current 0.03%, PY 0.02%, 30 Days 0%",
+"Chargebacks Count "Current 0.0%, PY 0.0%, 30 Days 0.0%"	undefined
+}	undefined
+}	undefined
+```
+
+
+
