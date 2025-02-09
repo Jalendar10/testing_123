@@ -500,7 +500,16 @@
         return;
       }
 
-      let chartData = data.data;
+      let chartData = {
+        labels: data.data.categories,
+        datasets: [{
+          label: data.data.label,
+          data: data.data.values.map(Number), // Ensure values are numbers
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      };
 
       const canvasId = 'chartCanvas-' + Date.now();
       const chartContainer = document.createElement('div');
@@ -639,16 +648,29 @@
         if (recommendationsContainer) {
           recommendationsContainer.innerHTML = '';
 
-          data.recommendations.forEach(line => {
-            const trimmed = line.trim();
-            if (!trimmed) return;
+          const regex = /```json\s*([\s\S]*?)\s*```/;
+          const match = data.response.match(regex);
+          if (match) {
+            try {
+              const jsonData = JSON.parse(match[1]);
+              for (const category in jsonData) {
+                const row = document.createElement('tr');
+                const categoryCell = document.createElement('td');
+                categoryCell.textContent = category;
+                row.appendChild(categoryCell);
 
-            const parsed = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            const row = document.createElement('tr');
-            const [category, details] = parsed.split(':');
-            row.innerHTML = `<td>${category}</td><td>${details}</td>`;
-            recommendationsContainer.appendChild(row);
-          });
+                const detailsCell = document.createElement('td');
+                const detailsPre = document.createElement('pre');
+                detailsPre.textContent = JSON.stringify(jsonData[category], null, 2);
+                detailsCell.appendChild(detailsPre);
+                row.appendChild(detailsCell);
+
+                recommendationsContainer.appendChild(row);
+              }
+            } catch (error) {
+              console.error("Error parsing JSON data:", error);
+            }
+          }
         }
       })
       .catch(err => console.error('Error fetching recommendations:', err));
