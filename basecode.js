@@ -1,10 +1,11 @@
+// baseCode.js
 require('dotenv').config();
 const https = require('https');
 const { createHmac } = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 
 /**
- * Load environment variables.
+ * Load environment variables like in Python's load_dotenv.
  */
 function loadEnvironment() {
   const apiKey = process.env.API_KEY;
@@ -18,9 +19,11 @@ function loadEnvironment() {
 }
 
 /**
- * Create the request body.
+ * Create the request body, including a system message for `agent_behavior`.
+ * Then append the user/assistant messages.
  */
 function createRequestBody(messages, agentBehavior) {
+  // Convert them to the format the endpoint expects
   const systemMessage = { role: 'system', content: agentBehavior || '' };
 
   const serializedMessages = [systemMessage].concat(
@@ -45,7 +48,8 @@ function createRequestBody(messages, agentBehavior) {
 }
 
 /**
- * Create HMAC signature.
+ * Create HMAC signature:
+ *  hmac_source_data = apiKey + requestId + timestamp + JSON(body)
  */
 function createHmacSignature(body, apiKey, apiSecret, timestamp, requestId) {
   const bodyString = JSON.stringify(body);
