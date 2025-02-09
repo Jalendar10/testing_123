@@ -128,6 +128,35 @@
     .suggestions-table th {
       background-color: #f2f2f2;
     }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      position: relative;
+      margin: 5% auto;
+      padding: 20px;
+      width: 80%;
+      background-color: #fff;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body class="fdl-2" style="line-height: 1.6; color: #333;">
@@ -427,6 +456,12 @@
       </div>
     </section>
   </main>
+  <div id="chart-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <canvas id="modal-chart-canvas"></canvas>
+    </div>
+  </div>
   <script>
     // Function to send a message
     function sendMessage() {
@@ -532,6 +567,24 @@
           plugins: {
             legend: { position: 'top' },
             title: { display: true, text: `Chart Type: ${data.chart}` },
+            tooltip: {
+              callbacks: {
+                label: function(tooltipItem) {
+                  return tooltipItem.label + ': ' + tooltipItem.raw;
+                }
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true,
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'xy',
+              }
+            }
           },
           scales: {
             y: {
@@ -541,8 +594,75 @@
         },
       };
 
-      new Chart(ctx, chartConfig);
+      const chart = new Chart(ctx, chartConfig);
+
+      // Add click event to open chart in modal
+      canvas.addEventListener('click', () => {
+        openChartModal(chartData, chartType);
+      });
     }
+
+    // Function to open chart in modal
+    function openChartModal(chartData, chartType) {
+      const modal = document.getElementById('chart-modal');
+      const modalCanvas = document.getElementById('modal-chart-canvas');
+      const modalCtx = modalCanvas.getContext('2d');
+
+      const modalChartConfig = {
+        type: chartType,
+        data: chartData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: `Chart Type: ${chartType}` },
+            tooltip: {
+              callbacks: {
+                label: function(tooltipItem) {
+                  return tooltipItem.label + ': ' + tooltipItem.raw;
+                }
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true,
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'xy',
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true, // Ensure the y-axis starts at zero
+            },
+          },
+        },
+      };
+
+      new Chart(modalCtx, modalChartConfig);
+      modal.style.display = 'block';
+    }
+
+    // Function to close the modal
+    function closeChartModal() {
+      const modal = document.getElementById('chart-modal');
+      modal.style.display = 'none';
+    }
+
+    // Add event listener to close button
+    document.querySelector('.close-button').addEventListener('click', closeChartModal);
+
+    // Add event listener to close modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+      const modal = document.getElementById('chart-modal');
+      if (event.target == modal) {
+        closeChartModal();
+      }
+    });
 
     // Function to add a message to the chatbot
     function addMessage(sender, message) {
