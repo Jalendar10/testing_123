@@ -1,61 +1,114 @@
-
-// Function to get recommendations
-function getRecommendations() {
-  const sections = document.querySelectorAll('section.collect');
-  const collectedData = [];
-
-  sections.forEach(section => {
-    const headers = section.querySelectorAll('h1, h2, h3, h4, h5');
-    const sectionData = {};
-    headers.forEach(header => {
-      const headerText = header.textContent;
-      const childData = [];
-      let sibling = header.nextElementSibling;
-      while (sibling && !sibling.matches('h1, h2, h3, h4, h5')) {
-        childData.push(sibling.textContent);
-        sibling = sibling.nextElementSibling;
-      }
-      sectionData[headerText] = childData;
-    });
-    collectedData.push(sectionData);
-  });
-
-  fetch('/recommend', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: collectedData })
-  })
-  .then(response => response.json())
-  .then(data => {
-    const recommendationsContainer = document.getElementById('suggestions-body');
-    console.log('Recommendations response:', data);
-    if (recommendationsContainer) {
-      recommendationsContainer.innerHTML = '';
-
-      if (data.recommendations && data.recommendations.length > 0) {
-        const jsonString = data.recommendations.join('\n');
-        try {
-          const jsonData = JSON.parse(jsonString);
-          console.log("Recommendations JSON:", jsonData);
-          for (const category in jsonData) {
-            const row = document.createElement('tr');
-            const categoryCell = document.createElement('td');
-            categoryCell.textContent = category;
-            row.appendChild(categoryCell);
-
-            const detailsCell = document.createElement('td');
-            const detailsPre = document.createElement('pre');
-            detailsPre.textContent = JSON.stringify(jsonData[category], null, 2);
-            detailsCell.appendChild(detailsPre);
-            row.appendChild(detailsCell);
-
-            recommendationsContainer.appendChild(row);
-          }
-        } catch (error) {
-          console.error("Error parsing JSON data:", error);
-        }
-      }
-    }
-  })
-  .catch(err => console.error('Error fetching recommendations:', err));
+{
+    "recommendations": [
+        "```json",
+        "{",
+        "  \"Financial Health\": {",
+        "    \"Established Year\": 1929,",
+        "    \"Company Registration No\": \"00241882\",",
+        "    \"Onboarded Year\": 2014,",
+        "    \"Website\": \"www.fullers.co.uk\",",
+        "    \"CreditSafe Score\": 68,",
+        "    \"CreditSafe Commentary\": {",
+        "      \"Asset Coverage\": \"High\",",
+        "      \"Net Working Capital\": \"Negative\",",
+        "      \"Return on Total\": \"Low\",",
+        "      \"Equity Reduction\": \"Yes\",",
+        "      \"Revenue Increase\": \"Yes\",",
+        "      \"Late Payments\": \"Low percentage\",",
+        "      \"Aud Comments\": \"No adverse information reported\"",
+        "    }",
+        "  },",
+        "  \"Performance Metrics\": {",
+        "    \"Operating Profit\": {",
+        "      \"FYE 2023\": \"€27,700,000\",",
+        "      \"Change\": \"154.13%\"",
+        "       \"Depreciation\": {",
+        "      \"FYE2023\": \"€26,100,000\",",
+        "      \"Change\": \"-19.69%\"",
+        "    },",
+        "    \"Retained Profit\": {",
+        " \"FYE 2023\":€-900,000\",",
+        "      \"Change\": \"-280.00%\"",
+        "    },",
+        "    \"Total Fixed Assets\": {",
+        "      \"FYE 2023\": \"€689,500,000\",",
+        "      \"Change\": \"-0.99%\"",
+        "    },",
+        "    \"Cash\": {",
+        "      \"FYE 2023\": \"€12,200,000\",",
+        "      \"Change\": \"-13.48    },",
+        "    \"Current Liabilities\": {",
+        "      \"FYE 2023\": \"€64,900,000\",",
+        "      \"Change\": \"-1.52%\"",
+        "    },",
+        "    \"Long-term Liabilities\": {",
+        "      \"FYE 2023\": \"€226,400,000\",",
+        "      \"Change\": \"+1.03%\"",
+        "    },",
+        "    \"angible Net Worth\": {",
+        "      \"FYE 2023\": \"€-31,800,000\",",
+        "      \"Change\": \"-7.07    },",
+        "    \"Cash Flow\": {",
+        "      \"FYE 2023\": \"€20,700,000\",",
+        "      \"Change\": \"+23.95%\"",
+        "    },",
+        "    \"Sales Metrics\": {",
+        "      \" Days Sales\": \"€361,566\",",
+        "      \"Annual CTO\": \"€69,000,000\",",
+        "      \"Average Transaction Value\": \"30.12\"",
+        "    }",
+        "  },",
+        "  \"Credit Risk\": {",
+        "   Assessment\": \"Low Risk\",",
+        " \"Negative Working Capital\": true,",
+        "    \"Late Payments\": \"Minimal\"",
+        "  },",
+        "  \"Exposure\": {",
+        " \"Current Relationship Exposure\": \"€2,900\",",
+        "    \"Peak Relationship Exposure\": \"€3,201,439\",",
+        "    \"Current N Exposure\": \"€0\",",
+        "    \"Peak NDX Exposure\": \"€3,071,334\",",
+        "    \"Operating Exposure\": \"€2,900\",",
+        " \"Chargeback Exposure\": {",
+        "      \"Current\": \"€86\",",
+        "      \"Peak\": \"€6,858\"",
+        "    },",
+        "    \"Refund\": {",
+        "      \"Current\": \"€2,814\",",
+        "      \"Peak\": \"€123,247\"",
+        "    }",
+        "  },",
+        "  \"Operational Metrics\": {",
+        "    \"NDX Percentage\": 89,",
+        "    \"NDX Days\": 15",
+        "  },",
+        "  \"Variable Metrics\": {",
+        "    \"Refund Rate\": {",
+        "     Current\": \"0.5%\",",
+        "      \"Previous Year\": \"0.23%\",",
+        "      \"30 Days Ratio\": \"1.76%\"",
+        "    },",
+        "    \"Chargebacks\": {",
+        "      \" Current\": \"0.03%\",",
+        "      \"Previous Year \"0.02%\",",
+        "      \"Count Current\": \"0%\",",
+        "      \"Count Previous Year\": \"0.0%\"",
+        "    },",
+        "    \"Payment Ratios\": {",
+        "      \"Keyed vs. Chip Percentage\": \".52%\",",
+        "      \"Keyed vs. ECOM Percentage\": \"98%\"",
+        "    }",
+        "  }",
+        "}",
+        "```"
+    ]
 }
+
+
+(index):673 
+ Error parsing JSON data: SyntaxError: Unexpected token '`', "```json
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at (index):656:33
+
