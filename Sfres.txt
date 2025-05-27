@@ -1,48 +1,80 @@
-zz
-
-WITH parsed_xml AS (
+hh
+WITH xml_in AS (
     SELECT
         merchant_id,
-        PARSE_XML(request) AS parsed_request
+        PARSE_XML(request)     AS x
     FROM CRDATAHUBDEV.CRREF_ADHOC.CR_DILIGENCE_APPS_SERVICES
-    WHERE
-        portfolio_id = '1001001'
-        AND service_name = 'MATCH_RT'
-        AND application_id = '43364690'
+    WHERE portfolio_id = '1001001'
+      AND service_name = 'MATCH_RT'
+      AND application_id = '43364690'
 ),
-principal_list AS (
+principals AS (
     SELECT
         merchant_id,
-        GET(XMLGET(parsed_request, 'MerchantName'), '$') AS merchant_name,
-        principal.value AS principal_value,
-        principal.index AS principal_index
-    FROM parsed_xml,
-         LATERAL FLATTEN(INPUT => XMLGET(XMLGET(parsed_request, 'Principals'), 'Principal')) principal
-),
-principal_fields AS (
-    SELECT
-        merchant_id,
-        merchant_name,
-        principal_index,
-        GET(field.value, '@') AS field_name,
-        GET(field.value, '$') AS field_value
-    FROM principal_list,
-         LATERAL FLATTEN(INPUT => principal_value) field
-),
-pivoted AS (
-    SELECT
-        merchant_id,
-        merchant_name,
-        principal_index,
-        MAX(CASE WHEN field_name = 'PrincipalFirstName' THEN field_value END) AS principal_first_name,
-        MAX(CASE WHEN field_name = 'PrincipalLastName' THEN field_value END) AS principal_last_name,
-        MAX(CASE WHEN field_name = 'PrincipalAddressCity' THEN field_value END) AS principal_city,
-        MAX(CASE WHEN field_name = 'PrincipalAddressCountrySubdivision' THEN field_value END) AS principal_state,
-        MAX(CASE WHEN field_name = 'PrincipalAddressPostalCode' THEN field_value END) AS principal_zip
-    FROM principal_fields
-    GROUP BY merchant_id, merchant_name, principal_index
+        x:"MATCH_RT_Request"."MerchantName":"$"::string        AS merchant_name,
+        f.index                                                AS principal_index,   -- 0, 1, 2 …
+        f.value                                                AS p                  -- the <Principal> node
+    FROM xml_in,
+         -- one row per <Principal>; FLATTEN provides the index for free
+         LATERAL FLATTEN ( INPUT => x:"MATCH_RT_Request"."Principals"."Principal" ) f
 )
-SELECT * FROM pivoted
+SELECT
+    merchant_id,
+    merchant_name,
+    principal_index,
+    p:"PrincipalFirstName":"$"            ::string AS principal_first_name,
+    p:"PrincipalLastName":"$"             ::string AS principal_last_name,
+    p:"PrincipalAddressCity":"$"          ::string AS principal_city,
+    p:"PrincipalAddressCountrySubdivision":"$"::string AS principal_state,
+    p:"PrincipalAddressPostalCode":"$"    ::string AS principal_zip
+FROM principals
 ORDER BY principal_index;
 
 
+
+
+
+
+uu
+
+
+WITH xml_in AS ( … same as above … ),
+
+principal_list AS (
+    SELECT
+        merchant_id,
+        x:"MATCH_RT_Request"."MerchantName":"$"::string AS merchant_name,
+        f.index                                         AS principal_index,
+        f.value                                         AS principal_xml
+    FROM xml_in,
+         LATERAL FLATTEN(
+             INPUT => x:"MATCH_RT_Request"."Principals"."Principal"
+         ) f
+),
+principal_kv AS (
+    SELECT
+        merchant_id,
+        merchant_name,
+        principal_index,
+        kv.key        AS field_name,
+        kv.value:"$"  AS field_value
+    FROM principal_list,
+         LATERAL FLATTEN( INPUT => OBJECT_PAIRS(principal_xml) ) kv
+)
+SELECT *
+FROM principal_kv
+PIVOT (
+    MAX(field_value)
+    FOR field_name IN
+        ( 'PrincipalFirstName',
+          'PrincipalMiddleInitial',
+          'PrincipalLastName',
+          'PrincipalAddressLine1',
+          'PrincipalAddressCity',
+          'PrincipalAddressCountrySubdivision',
+          'PrincipalAddressPostalCode',
+          'PrincipalPhoneNumber',
+          'PrincipalNationalIDValue',
+          'PrincipalAltPhoneNumber' )
+) AS p
+ORDER BY principal_index;
