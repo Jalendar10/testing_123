@@ -1,0 +1,46 @@
+WITH parsed_xml AS (
+    SELECT
+        merchant_id,
+        PARSE_XML(request) AS parsed_request
+    FROM CRDATAHUBDEV.CRREF_ADHOC.CR_DILIGENCE_APPS_SERVICES
+    WHERE
+        portfolio_id = '1001001'
+        AND service_name = 'MATCH_RT'
+        AND application_id = '43364690'
+),
+principal_nodes AS (
+    SELECT
+        merchant_id,
+        GET(XMLGET(parsed_request, 'MerchantName'), '$') AS merchant_name,
+        principal.value AS principal_value,
+        principal.index AS principal_index
+    FROM parsed_xml,
+         LATERAL FLATTEN(
+             INPUT => XMLGET(XMLGET(parsed_request, 'Principals'), 'Principal')
+         ) principal
+),
+flattened_fields AS (
+    SELECT
+        merchant_id,
+        merchant_name,
+        principal_index,
+        GET(field.value, '@') AS field_name,
+        GET(field.value, '$') AS field_value
+    FROM principal_nodes,
+         LATERAL FLATTEN(INPUT => principal_value) field
+),
+pivoted AS (
+    SELECT
+        merchant_id,
+        merchant_name,
+        principal_index,
+        MAX(CASE WHEN field_name = 'PrincipalFirstName' THEN field_value END) AS principal_first_name,
+        MAX(CASE WHEN field_name = 'PrincipalLastName' THEN field_value END) AS principal_last_name,
+        MAX(CASE WHEN field_name = 'PrincipalAddressCity' THEN field_value END) AS principal_city,
+        MAX(CASE WHEN field_name = 'PrincipalAddressCountrySubdivision' THEN field_value END) AS principal_state,
+        MAX(CASE WHEN field_name = 'PrincipalAddressPostalCode' THEN field_value END) AS principal_zip
+    FROM flattened_fields
+    GROUP BY merchant_id, merchant_name, principal_index
+)
+SELECT * FROM pivoted
+ORDER BY principal_index;
