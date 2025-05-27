@@ -1,4 +1,4 @@
-dd
+zz
 
 WITH parsed_xml AS (
     SELECT
@@ -14,16 +14,10 @@ principal_list AS (
     SELECT
         merchant_id,
         GET(XMLGET(parsed_request, 'MerchantName'), '$') AS merchant_name,
-        FLATTEN(XMLGET(parsed_request, 'Principals'):Principal) AS principal
-    FROM parsed_xml
-),
-flattened_principal AS (
-    SELECT
-        merchant_id,
-        merchant_name,
-        principal.index AS principal_index,
-        principal.value AS principal_value
-    FROM principal_list
+        principal.value AS principal_value,
+        principal.index AS principal_index
+    FROM parsed_xml,
+         LATERAL FLATTEN(INPUT => XMLGET(XMLGET(parsed_request, 'Principals'), 'Principal')) principal
 ),
 principal_fields AS (
     SELECT
@@ -32,8 +26,8 @@ principal_fields AS (
         principal_index,
         GET(field.value, '@') AS field_name,
         GET(field.value, '$') AS field_value
-    FROM flattened_principal,
-         LATERAL FLATTEN(INPUT => principal_value) AS field
+    FROM principal_list,
+         LATERAL FLATTEN(INPUT => principal_value) field
 ),
 pivoted AS (
     SELECT
@@ -50,3 +44,5 @@ pivoted AS (
 )
 SELECT * FROM pivoted
 ORDER BY principal_index;
+
+
