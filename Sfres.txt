@@ -1,3 +1,5 @@
+dd
+
 WITH parsed_xml AS (
     SELECT
         merchant_id,
@@ -8,26 +10,30 @@ WITH parsed_xml AS (
         AND service_name = 'MATCH_RT'
         AND application_id = '43364690'
 ),
-principal_nodes AS (
+principal_list AS (
     SELECT
         merchant_id,
         GET(XMLGET(parsed_request, 'MerchantName'), '$') AS merchant_name,
-        principal.value AS principal_value,
-        principal.index AS principal_index
-    FROM parsed_xml,
-         LATERAL FLATTEN(
-             INPUT => XMLGET(XMLGET(parsed_request, 'Principals'), 'Principal')
-         ) principal
+        FLATTEN(XMLGET(parsed_request, 'Principals'):Principal) AS principal
+    FROM parsed_xml
 ),
-flattened_fields AS (
+flattened_principal AS (
+    SELECT
+        merchant_id,
+        merchant_name,
+        principal.index AS principal_index,
+        principal.value AS principal_value
+    FROM principal_list
+),
+principal_fields AS (
     SELECT
         merchant_id,
         merchant_name,
         principal_index,
         GET(field.value, '@') AS field_name,
         GET(field.value, '$') AS field_value
-    FROM principal_nodes,
-         LATERAL FLATTEN(INPUT => principal_value) field
+    FROM flattened_principal,
+         LATERAL FLATTEN(INPUT => principal_value) AS field
 ),
 pivoted AS (
     SELECT
@@ -39,7 +45,7 @@ pivoted AS (
         MAX(CASE WHEN field_name = 'PrincipalAddressCity' THEN field_value END) AS principal_city,
         MAX(CASE WHEN field_name = 'PrincipalAddressCountrySubdivision' THEN field_value END) AS principal_state,
         MAX(CASE WHEN field_name = 'PrincipalAddressPostalCode' THEN field_value END) AS principal_zip
-    FROM flattened_fields
+    FROM principal_fields
     GROUP BY merchant_id, merchant_name, principal_index
 )
 SELECT * FROM pivoted
